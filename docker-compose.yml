@@ -1,43 +1,41 @@
 version: '3.8'
 services:
   backend:
-    build: ./backend
+    image: 269825205171.dkr.ecr.ap-south-1.amazonaws.com/actionstest-backend:latest
     ports:
-      - "5001:5000"
+      - "5000:5000"
     environment:
       - PORT=5000
-      - DBURL=mongodb://test5:123@mongo:27017/mongodb?authSource=admin
-      - CLIENT_URL=http://localhost:3000
+      - DB_NAME=appdb
+      - DB_HOST=db  
+      - DB_USER=appuser
+      - DB_PASS=StrongPassword123
     depends_on:
-      - mongo
+      - db
     networks:
-      - mongo-networks
+      - actions-networks
 
   frontend:
-    build: ./frontend
+    image: 269825205171.dkr.ecr.ap-south-1.amazonaws.com/actionstest-frontend:latest
     ports:
-      - "5173:3000"
+      - "5173:8080"
     depends_on:
       - backend
     networks:
-      - mongo-networks
+      - actions-networks
 
-  mongo:
-    image: mongo:6.0
-    ports:
-      - "27017:27017"
+  db:
+    image: mysql:8.0
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=test5
-      - MONGO_INITDB_ROOT_PASSWORD=123
-      - MONGO_INITDB_DATABASE=mongodb
-    volumes:
-      - mongo-data:/data/db
-      - ./mongodb:/docker-entrypoint-initdb.d:ro
+      - MYSQL_ROOT_PASSWORD=StrongPassword123
+      - MYSQL_DATABASE=appdb
+      - MYSQL_USER=appuser
+      - MYSQL_PASSWORD=StrongPassword123  
+    ports:
+      - "3306:3306"
     networks:
-      - mongo-networks
-
-volumes:
-  mongo-data:
-
+      - actions-networks
+    
 networks:
-  mongo-networks:
+  actions-networks:
+    driver: bridge
