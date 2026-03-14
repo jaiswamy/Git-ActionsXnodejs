@@ -48,13 +48,17 @@ jobs:
     - name: Push Docker Image
       uses: docker/build-push-action@v2
       with:
-        context: .
+        context: ./frontend
         push: true
         tags: jaicswamy962/frontend:latest
-        script: |
-          cd frontend/
-          docker push jaicswamy962/frontend:latest
-          docker push jaicswamy962/backend:latest
+
+    - name: Push Docker Image
+      uses: docker/build-push-action@v2
+      with:
+        context: ./backend
+        push: true
+        tags: jaicswamy962/backend:latest
+        
 
   deploy:
     environment: production
