@@ -73,13 +73,16 @@ jobs:
         username: ${{ secrets.AWS_USERNAME }}
         key: ${{ secrets.AWS_SSH_KEY }}
         script: |
-          cd root/
+          if [ ! -d "Git-ActionsXnodejs" ]; then
+            git clone https://github.com/jaiswamy/Git-ActionsXnodejs.git
+          fi
+
+          cd Git-ActionsXnodejs
+
+          git pull origin main
+
           docker pull jaicswamy962/frontend:latest
           docker pull jaicswamy962/backend:latest
-          
-          git clone https://github.com/jaiswamy/Git-ActionsXnodejs.git
-          cd Git-ActionsXnodejs/
-          docker-compose up -d 
-
-          sync; echo 3 > /proc/sys/vm/drop_caches
-          docker system prune -a --volumes -f
+          docker compose down
+          docker compose up -d
+          docker system prune -f
